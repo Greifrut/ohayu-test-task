@@ -22,6 +22,7 @@ describe("EsimPageHeader", () => {
       "#plan-details",
     );
     expect(screen.getByRole("button", { name: "USD" })).toBeInTheDocument();
-    expect(screen.getByText("Sign in")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "EUR" })).toBeInTheDocument();
+    expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
   });
 });

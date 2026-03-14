@@ -3,6 +3,7 @@ import { CACHE_TAGS } from "../constant/cache-tags";
 import { assignPopularity } from "../util/assign-popularity";
 import { mapBundleToPlanItem } from "../util/map-bundle-to-plan";
 import { mockUnitedStatesStore } from "../model/provider-content";
+import { getContentVersions } from "./content-version-store";
 import { randomizeStoreResponse } from "./fake-live-updates";
 import { simulateApiLatency } from "./simulate-latency";
 
@@ -35,7 +36,8 @@ export async function getUnitedStatesPlans() {
   await simulateApiLatency(150);
 
   const { store } = await getUnitedStatesStoreSnapshot();
-  const randomizedStore = randomizeStoreResponse({ store });
+  const { prices, providerCatalog } = await getContentVersions();
+  const randomizedStore = randomizeStoreResponse({ store }, providerCatalog + prices);
   const plans = assignPopularity(randomizedStore.store.map((bundle) => mapBundleToPlanItem(bundle)));
 
   return plans;

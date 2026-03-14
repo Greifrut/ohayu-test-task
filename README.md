@@ -3,6 +3,7 @@
 Demo project for a **United States eSIM country page** built with Next.js App Router.
 The page reproduces a production-like marketing page and demonstrates:
 
+- A dedicated home page for reviewers and route discovery
 - Feature-slice UI architecture
 - Different server-cache update patterns with `next/cache`
 - Mocked API routes for data and cache-testing
@@ -36,8 +37,9 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Country page route:
+Routes:
 
+- `/`
 - `/esim/united-states-us`
 
 ### 3) Lint
@@ -46,13 +48,19 @@ Country page route:
 pnpm lint
 ```
 
-### 4) Unit + integration tests
+### 4) Typecheck
+
+```bash
+pnpm typecheck
+```
+
+### 5) Unit + integration tests
 
 ```bash
 pnpm test
 ```
 
-### 5) E2E tests
+### 6) E2E tests
 
 ```bash
 pnpm test:e2e
@@ -60,7 +68,14 @@ pnpm test:e2e
 
 This starts Next.js automatically via Playwright web server.
 
-### 6) Bundle analysis
+To validate the production server path locally:
+
+```bash
+pnpm build
+PW_START_WEBSERVER=1 PW_USE_PROD_SERVER=1 pnpm test:e2e
+```
+
+### 7) Bundle analysis
 
 ```bash
 pnpm analyze
@@ -77,8 +92,13 @@ Generated reports are saved in:
 ```text
 src/
   app/
+    page.tsx
     esim/united-states-us/page.tsx
-    api/revalidate/route.ts
+    api/esim-us/revalidate/route.ts
+    robots.ts
+    sitemap.ts
+  features/home/
+    ui/home-page.tsx
   features/esim-united-states/
     api/
       get-faqs.ts
@@ -134,14 +154,14 @@ Current strategy:
 
 A dedicated endpoint is provided for cache refresh:
 
-- Route: `/api/revalidate`
-- File: [`src/app/api/revalidate/route.ts`](/Users/arturbunko/Documents/ohayu/ohayu-test-app/src/app/api/revalidate/route.ts)
+- Route: `/api/esim-us/revalidate`
+- File: [`src/app/api/esim-us/revalidate/route.ts`](/Users/arturbunko/Documents/ohayu/ohayu-test-app/src/app/api/esim-us/revalidate/route.ts)
 - Method: `POST`
 - Body:
 
 ```json
 {
-  "secret": "demo-secret",
+  "secret": "your-revalidate-secret",
   "tag": "us-prices"
 }
 ```
@@ -155,7 +175,8 @@ Allowed tags:
 - `us-plan-details`
 - `us-faqs`
 
-Revalidation is validated with `OHAYU_REVALIDATE_SECRET`.
+Revalidation requires `OHAYU_REVALIDATE_SECRET`. Copy [`.env.example`](/Users/arturbunko/Documents/ohayu/ohayu-test-app/.env.example)
+to your local env setup and provide a non-default secret.
 
 ## Test strategy
 
@@ -197,8 +218,12 @@ It runs on:
 Jobs:
 
 1. `lint`
-2. `unit-and-integration`
-3. `e2e`
+2. `typecheck`
+3. `build`
+4. `unit-and-integration`
+5. `e2e`
+
+The E2E job runs against a production build via `next start`, not only `next dev`.
 
 ## Notes
 

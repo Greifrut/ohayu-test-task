@@ -1,3 +1,12 @@
+export type SupportedCurrency = "USD" | "EUR";
+
+export type PlanPriceSummary = {
+  amountCents: number;
+  priceLabel: string;
+  unitPrice: string;
+  sortPrice: number;
+};
+
 export type PlanItem = {
   id: string;
   dataAmount: string;
@@ -12,6 +21,7 @@ export type PlanItem = {
   badge?: string;
   highlighted?: boolean;
   totalAmountCents?: number;
+  prices: Record<SupportedCurrency, PlanPriceSummary>;
   bestFor: string[];
 };
 

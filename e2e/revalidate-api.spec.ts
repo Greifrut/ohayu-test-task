@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "demo-secret";
+const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "playwright-secret";
 
 test.describe("revalidate API", () => {
   test("returns success for allowed tags with valid secret", async ({ request }) => {
-    const response = await request.post("/api/revalidate", {
+    const response = await request.post("/api/esim-us/revalidate", {
       data: {
         secret: revalidateSecret,
         tag: "us-prices",
@@ -22,7 +22,7 @@ test.describe("revalidate API", () => {
   });
 
   test("rejects unknown tags and bad secrets", async ({ request }) => {
-    const unknownTagResponse = await request.post("/api/revalidate", {
+    const unknownTagResponse = await request.post("/api/esim-us/revalidate", {
       data: {
         secret: revalidateSecret,
         tag: "us-unknown",
@@ -31,7 +31,7 @@ test.describe("revalidate API", () => {
     expect(unknownTagResponse.status()).toBe(400);
     expect((await unknownTagResponse.json()).error).toBe("Unknown tag");
 
-    const unauthorizedResponse = await request.post("/api/revalidate", {
+    const unauthorizedResponse = await request.post("/api/esim-us/revalidate", {
       data: {
         secret: "bad-secret",
         tag: "us-prices",

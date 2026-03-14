@@ -6,19 +6,17 @@ import { EsimPageHeader } from "./page-header";
 import { RelatedCountriesSection } from "./related-countries-section";
 import { ReviewsSection } from "./reviews-section";
 import { SiteFooter } from "./site-footer";
-import { FaqSection } from "./faq-section";
-import { getUnitedStatesFaqs } from "../api/get-faqs";
 
 import {
+  FaqSectionFallback,
   PlanDetailsSectionFallback,
   PlansSectionFallback,
 } from "./fallbacks";
+import { FaqSectionSlot } from "./slots/faq-section-slot";
 import { PlanDetailsSectionSlot } from "./slots/plan-details-section-slot";
 import { PlansSectionSlot } from "./slots/plans-section-slot";
 
 export async function EsimUnitedStatesPage() {
-  const faqs = await getUnitedStatesFaqs();
-
   return (
     <div className="bg-sky-50/60">
       <EsimPageHeader />
@@ -33,7 +31,9 @@ export async function EsimUnitedStatesPage() {
         <DetailsSection />
         <HowItWorksSection />
         <ReviewsSection />
-        <FaqSection faqs={faqs} />
+        <Suspense fallback={<FaqSectionFallback />}>
+          <FaqSectionSlot />
+        </Suspense>
         <RelatedCountriesSection />
       </main>
       <SiteFooter />

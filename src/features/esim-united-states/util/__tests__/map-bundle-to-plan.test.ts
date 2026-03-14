@@ -49,6 +49,14 @@ describe("mapBundleToPlanItem", () => {
         "Data only",
         "Top-up available",
       ],
+      prices: {
+        USD: {
+          priceLabel: "$24.50",
+        },
+        EUR: {
+          priceLabel: "€22.40",
+        },
+      },
     });
   });
 

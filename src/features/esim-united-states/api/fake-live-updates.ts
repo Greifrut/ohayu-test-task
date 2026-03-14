@@ -1,5 +1,3 @@
-import { faker } from "@faker-js/faker";
-
 import type { FaqItem, PlanDetailItem, StoreResponse } from "../model/types";
 
 const FAQ_APPENDIXES = [
@@ -17,30 +15,48 @@ const DETAIL_APPENDIXES = [
   "Keep your OS and eSIM settings up to date.",
 ];
 
-const priceJitter = (base: number): number => {
-  const jitterPercent = faker.number.float({ min: -0.08, max: 0.08, fractionDigits: 3 });
+const hashValue = (input: string): number => {
+  let hash = 0;
+
+  for (const character of input) {
+    hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
+  }
+
+  return hash;
+};
+
+const pickBySeed = <T,>(items: readonly T[], seed: number): T => items[seed % items.length];
+
+const buildSuffix = (seed: number): string => String(seed % 100000).padStart(5, "0");
+
+const priceJitter = (base: number, seed: number): number => {
+  const jitterPercent = ((seed % 161) - 80) / 1000;
   const adjusted = base * (1 + jitterPercent);
 
   return Math.max(99, Math.round(adjusted / 5) * 5);
 };
 
-export function randomizeFaqs(faqs: readonly FaqItem[]): FaqItem[] {
+export function randomizeFaqs(faqs: readonly FaqItem[], version: number): FaqItem[] {
   return faqs.map((faq) => ({
     ...faq,
-    answer: `${faq.answer} ${faker.helpers.arrayElement(FAQ_APPENDIXES)} [${faker.string.numeric(5)}]`,
+    answer: `${faq.answer} ${pickBySeed(FAQ_APPENDIXES, hashValue(`${faq.question}:${version}`))} [${buildSuffix(hashValue(`${faq.answer}:${version}`))}]`,
   }));
 }
 
-export function randomizeStoreResponse(source: StoreResponse): StoreResponse {
+export function randomizeStoreResponse(source: StoreResponse, version: number): StoreResponse {
   return {
     ...source,
     store: source.store.map((bundle) => {
+      const usdSeed = hashValue(`${bundle.bundleCodeAndPriceId}:usd:${version}`);
+      const eurSeed = hashValue(`${bundle.bundleCodeAndPriceId}:eur:${version}`);
       const usd = bundle.staticPrices.find((price) => price.currency === "USD");
       const eur = bundle.staticPrices.find((price) => price.currency === "EUR");
 
-      const updatedUsd = usd ? priceJitter(usd.amountCents) : Math.round(bundle.totalAmountCents * 1.01);
+      const updatedUsd = usd
+        ? priceJitter(usd.amountCents, usdSeed)
+        : Math.round(bundle.totalAmountCents * 1.01);
       const updatedEur = eur
-        ? priceJitter(eur.amountCents)
+        ? priceJitter(eur.amountCents, eurSeed)
         : Math.max(99, Math.round(updatedUsd / 0.84));
 
       return {
@@ -68,13 +84,17 @@ export function randomizeStoreResponse(source: StoreResponse): StoreResponse {
   };
 }
 
-export function randomizePlanDetailText(items: readonly PlanDetailItem[]): PlanDetailItem[] {
+export function randomizePlanDetailText(
+  items: readonly PlanDetailItem[],
+  version: number,
+): PlanDetailItem[] {
   return items.map((item) => {
     if (item.type !== "text") {
       return item;
     }
 
-    const enrichedText = `${item.text} ${faker.helpers.arrayElement(DETAIL_APPENDIXES)} [${faker.string.numeric(5)}]`;
+    const appendixSeed = hashValue(`${item.id}:${version}`);
+    const enrichedText = `${item.text} ${pickBySeed(DETAIL_APPENDIXES, appendixSeed)} [${buildSuffix(hashValue(`${item.text}:${version}`))}]`;
 
     return {
       ...item,

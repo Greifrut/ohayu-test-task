@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { EsimUnitedStatesPage } from "@/features/esim-united-states/ui/esim-united-states-page";
+import { HomePage } from "@/features/home/ui/home-page";
 
 export const metadata: Metadata = {
-  title: "eSIM for United States | Ohayu Test",
+  title: "Home",
   description:
-    "A reproduction of the US eSIM marketing page implemented with Next.js and component composition.",
+    "Launch page for the Ohayu Next.js migration demo with routes, architecture highlights, and evaluation guidance.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function Home() {
-  return <EsimUnitedStatesPage />;
+  return <HomePage />;
 }

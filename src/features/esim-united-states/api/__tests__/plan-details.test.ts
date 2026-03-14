@@ -5,12 +5,17 @@ vi.mock("next/cache", () => ({
   cacheTag: vi.fn(),
 }));
 
+import { CACHE_TAGS } from "../../constant/cache-tags";
 import { getUnitedStatesPlanDetails } from "../plan-details";
+import { bumpVersionForTag, resetContentVersions } from "../content-version-store";
 import { providerPlanDetailItems } from "../../model/provider-content";
 
 describe("getUnitedStatesPlanDetails", () => {
   it("refreshes plan detail text and keeps operator data current", async () => {
+    await resetContentVersions();
+
     const first = await getUnitedStatesPlanDetails();
+    await bumpVersionForTag(CACHE_TAGS.planDetails);
     const second = await getUnitedStatesPlanDetails();
 
     const firstText = first.find((item) => item.type === "text");

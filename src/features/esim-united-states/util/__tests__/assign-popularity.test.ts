@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { assignPopularity } from "../assign-popularity";
 import type { PlanItem } from "../../model/types";
+import { assignPopularity } from "../assign-popularity";
 
 describe("assignPopularity", () => {
-  const planTemplate = (id: string, dataAmountGb: number, validityDays: number): PlanItem => ({
+  const planTemplate = (
+    id: string,
+    dataAmountGb: number,
+    validityDays: number,
+  ): PlanItem => ({
     id,
     dataAmount: `${dataAmountGb}GB`,
     validity: `${validityDays} days`,
@@ -12,6 +16,20 @@ describe("assignPopularity", () => {
     priceLabel: "$10.00",
     unitPrice: "$1.00 per GB",
     sortPrice: 1,
+    prices: {
+      USD: {
+        amountCents: 1000,
+        priceLabel: "$10.00",
+        unitPrice: "$1.00 per GB",
+        sortPrice: 1,
+      },
+      EUR: {
+        amountCents: 920,
+        priceLabel: "€9.20",
+        unitPrice: "€0.92 per GB",
+        sortPrice: 0.92,
+      },
+    },
     operatorNames: ["AT&T"],
     bestFor: [],
   });
@@ -32,7 +50,10 @@ describe("assignPopularity", () => {
   });
 
   it("falls back to the second item when no standard featured plan exists", () => {
-    const input = [planTemplate("plan-a", 3, 14), planTemplate("plan-b", 10, 30)];
+    const input = [
+      planTemplate("plan-a", 3, 14),
+      planTemplate("plan-b", 10, 30),
+    ];
 
     const result = assignPopularity(input);
 

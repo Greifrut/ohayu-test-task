@@ -1,18 +1,26 @@
 import { Badge } from "@/shared/ui/badge";
 import type { KeyboardEvent } from "react";
-import type { PlanItem } from "../model/types";
+import type { PlanItem, SupportedCurrency } from "../model/types";
 
 interface PlanCardProps {
   plan: PlanItem;
   isSelected: boolean;
   onSelect: () => void;
+  selectedCurrency: SupportedCurrency;
 }
 
 function isActivate(event: KeyboardEvent<HTMLElement>) {
   return event.key === "Enter" || event.key === " ";
 }
 
-export function PlanCard({ isSelected, onSelect, plan }: PlanCardProps) {
+export function PlanCard({
+  isSelected,
+  onSelect,
+  plan,
+  selectedCurrency,
+}: PlanCardProps) {
+  const activePrice = plan.prices[selectedCurrency] ?? plan.prices.USD;
+
   return (
     <article
       role="button"
@@ -41,8 +49,8 @@ export function PlanCard({ isSelected, onSelect, plan }: PlanCardProps) {
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{plan.validity}</p>
       <h3 className="mt-2 text-2xl font-semibold text-slate-900">{plan.dataAmount}</h3>
       <p className="mt-1 text-sm text-slate-500">High-speed package</p>
-      <p className="mt-3 text-3xl font-bold text-slate-900">{plan.priceLabel}</p>
-      <p className="text-sm text-slate-600">{plan.unitPrice}</p>
+      <p className="mt-3 text-3xl font-bold text-slate-900">{activePrice.priceLabel}</p>
+      <p className="text-sm text-slate-600">{activePrice.unitPrice}</p>
       <ul className="mt-4 space-y-2 text-sm text-slate-700">
         {plan.bestFor.map((point) => (
           <li className="flex items-center gap-2" key={point}>
