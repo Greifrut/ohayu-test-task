@@ -3,7 +3,7 @@ import { mergeOperatorDetailsFromStore } from "../util/merge-operator-details";
 import { getUnitedStatesStoreSnapshot } from "./get-store";
 
 export async function getUnitedStatesPlanDetails() {
-  const { store } = await getUnitedStatesStoreSnapshot();
+  const { store, __debug } = await getUnitedStatesStoreSnapshot();
   const operators = mergeOperatorDetailsFromStore(store).slice(0, 3);
 
   return providerPlanDetailItems.map((item) =>
@@ -12,6 +12,9 @@ export async function getUnitedStatesPlanDetails() {
           ...item,
           operators,
         }
-      : item,
+      : {
+          ...item,
+          text: `${item.text} (${__debug.label})`,
+        },
   );
 }

@@ -25,11 +25,7 @@ export function PlanCard({ isSelected, onSelect, plan }: PlanCardProps) {
         }
       }}
       className={`relative cursor-pointer rounded-2xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
-        isSelected
-          ? "border-sky-600 bg-sky-50 shadow-sm"
-          : plan.highlighted
-            ? "border-sky-200 bg-sky-50/70"
-          : "border-slate-200 bg-white"
+        isSelected ? "border-sky-600 bg-sky-50 shadow-sm" : "border-slate-200 bg-white"
       }`}
     >
       <div className="relative mb-2 h-6">
