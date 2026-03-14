@@ -8,15 +8,14 @@ vi.mock("next/cache", () => ({
 import { getUnitedStatesPlans } from "../get-store";
 
 describe("getUnitedStatesPlans", () => {
-  it("returns fresh cache metadata on every call", async () => {
+  it("returns refreshed pricing on each mocked fetch when cache is not reused", async () => {
     const firstCall = await getUnitedStatesPlans();
     const secondCall = await getUnitedStatesPlans();
 
-    const firstCachedPlanText = firstCall.map((plan) => plan.bestFor.find((item) => item.includes("Data cache version")));
-    const secondCachedPlanText = secondCall.map((plan) => plan.bestFor.find((item) => item.includes("Data cache version")));
+    const firstPrices = firstCall.map((plan) => plan.priceLabel);
+    const secondPrices = secondCall.map((plan) => plan.priceLabel);
 
-    expect(firstCachedPlanText).toContain("Data cache version: snapshot-1");
-    expect(secondCachedPlanText).toContain("Data cache version: snapshot-2");
+    expect(firstPrices.some((price, index) => price !== secondPrices[index])).toBe(true);
   });
 
   it("marks the featured plan with popularity metadata", async () => {

@@ -1,16 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "../constant/cache-tags";
 import { seoFaqs } from "../model/seo-content";
+import { randomizeFaqs } from "./fake-live-updates";
 import { simulateApiLatency } from "./simulate-latency";
-
-let faqDebugVersion = 0;
-
-function getFaqDebugStamp() {
-  faqDebugVersion += 1;
-  return {
-    label: `faq-${faqDebugVersion}`,
-  };
-}
 
 export async function getUnitedStatesFaqs() {
   "use cache";
@@ -20,13 +12,7 @@ export async function getUnitedStatesFaqs() {
 
   await simulateApiLatency(150);
 
-  const debug = getFaqDebugStamp();
+  const faqData = { faqs: randomizeFaqs(seoFaqs) };
 
-  const faqData = { faqs: seoFaqs };
-
-  return faqData.faqs.map((faq) => ({
-    ...faq,
-    answer: `${faq.answer} (cache: ${debug.label})`,
-    __debug: debug,
-  }));
+  return faqData.faqs;
 }
