@@ -1,17 +1,9 @@
-import { CheckoutPanel } from "./checkout-panel";
+import { getUnitedStatesFaqs } from "../api/get-faqs";
+import { getUnitedStatesPlans } from "../api/get-store";
+import { getUnitedStatesPlanDetails } from "../api/plan-details";
 import { FaqSection } from "./faq-section";
 import { PlanDetailsSection } from "./plan-details-section";
 import { PlansSection } from "./plans-section";
-import {
-  getUnitedStatesFaqs,
-  getUnitedStatesPlanDetails,
-  getUnitedStatesPlans,
-} from "../model/server-data";
-
-export async function CheckoutPanelSlot() {
-  const plans = await getUnitedStatesPlans();
-  return <CheckoutPanel plans={plans} />;
-}
 
 export async function PlansSectionSlot() {
   const plans = await getUnitedStatesPlans();

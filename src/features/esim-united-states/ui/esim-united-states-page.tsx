@@ -7,13 +7,11 @@ import { RelatedCountriesSection } from "./related-countries-section";
 import { ReviewsSection } from "./reviews-section";
 import { SiteFooter } from "./site-footer";
 import {
-  CheckoutPanelSlot,
   FaqSectionSlot,
   PlanDetailsSectionSlot,
   PlansSectionSlot,
 } from "./async-sections";
 import {
-  CheckoutPanelFallback,
   FaqSectionFallback,
   PlanDetailsSectionFallback,
   PlansSectionFallback,
@@ -24,13 +22,7 @@ export function EsimUnitedStatesPage() {
     <div className="bg-sky-50/60">
       <EsimPageHeader />
       <main>
-        <HeroSection
-          checkoutPanel={(
-            <Suspense fallback={<CheckoutPanelFallback />}>
-              <CheckoutPanelSlot />
-            </Suspense>
-          )}
-        />
+        <HeroSection />
         <Suspense fallback={<PlansSectionFallback />}>
           <PlansSectionSlot />
         </Suspense>

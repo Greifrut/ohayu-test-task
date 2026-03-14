@@ -1,5 +1,5 @@
+import { getUnitedStatesFaqs } from "@/features/esim-united-states/api/get-faqs";
 import { NextResponse } from "next/server";
-import { getUnitedStatesFaqs } from "@/features/esim-united-states/model/server-data";
 
 export async function GET() {
   const faqs = await getUnitedStatesFaqs();
