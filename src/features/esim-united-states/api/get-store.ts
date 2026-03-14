@@ -1,8 +1,9 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "../constant/cache-tags";
-import { mockUnitedStatesStore } from "../model/provider-content";
 import { assignPopularity } from "../util/assign-popularity";
 import { mapBundleToPlanItem } from "../util/map-bundle-to-plan";
+import type { StoreResponse } from "../model/types";
+import { fetchMockJson } from "./fetch-mock";
 
 let storeDebugVersion = 0;
 
@@ -27,8 +28,12 @@ export async function getUnitedStatesStoreSnapshot() {
 
   const debug = getStoreDebugStamp();
 
+  const mockData = await fetchMockJson<StoreResponse>({
+    path: "/api/mock/esim/united-states-us/store",
+  });
+
   return {
-    ...mockUnitedStatesStore,
+    ...mockData,
     __debug: debug,
   };
 }

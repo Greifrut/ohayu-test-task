@@ -1,9 +1,19 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/cache", () => ({
   cacheLife: vi.fn(),
   cacheTag: vi.fn(),
 }));
+
+import { setupFeatureMockApiFetch } from "./fetch-mock";
+
+beforeEach(() => {
+  setupFeatureMockApiFetch();
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 import { getUnitedStatesFaqs } from "../get-faqs";
 
