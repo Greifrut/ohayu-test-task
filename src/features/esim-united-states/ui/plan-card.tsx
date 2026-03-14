@@ -1,15 +1,35 @@
 import { Badge } from "@/shared/ui/badge";
+import type { KeyboardEvent } from "react";
 import type { PlanItem } from "../model/types";
 
 interface PlanCardProps {
   plan: PlanItem;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-export function PlanCard({ plan }: PlanCardProps) {
+function isActivate(event: KeyboardEvent<HTMLElement>) {
+  return event.key === "Enter" || event.key === " ";
+}
+
+export function PlanCard({ isSelected, onSelect, plan }: PlanCardProps) {
   return (
     <article
-      className={`relative rounded-2xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg ${
-        plan.highlighted ? "border-sky-500 bg-sky-50 shadow-sm" : "border-slate-200 bg-white"
+      role="button"
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={(event) => {
+        if (isActivate(event)) {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
+      className={`relative cursor-pointer rounded-2xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
+        isSelected
+          ? "border-sky-600 bg-sky-50 shadow-sm"
+          : plan.highlighted
+            ? "border-sky-200 bg-sky-50/70"
+          : "border-slate-200 bg-white"
       }`}
     >
       <div className="relative mb-2 h-6">
@@ -35,16 +55,6 @@ export function PlanCard({ plan }: PlanCardProps) {
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className={`mt-5 w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
-          plan.highlighted
-            ? "border-sky-600 bg-sky-700 text-white hover:bg-sky-800"
-            : "border-slate-300 text-slate-800 hover:bg-slate-50"
-        }`}
-      >
-        Add to cart
-      </button>
     </article>
   );
 }

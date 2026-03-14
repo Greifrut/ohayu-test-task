@@ -4,19 +4,6 @@ function SkeletonBlock({ className }: { className: string }) {
   return <div className={`animate-pulse rounded-2xl bg-slate-200/70 ${className}`} />;
 }
 
-export function CheckoutPanelFallback() {
-  return (
-    <aside className="rounded-2xl border border-sky-100 bg-white p-5 shadow-[0_8px_30px_rgba(8,47,73,0.08)]">
-      <SkeletonBlock className="h-4 w-24" />
-      <SkeletonBlock className="mt-3 h-8 w-40" />
-      <SkeletonBlock className="mt-2 h-4 w-64" />
-      <SkeletonBlock className="mt-5 h-11 w-full" />
-      <SkeletonBlock className="mt-3 h-24 w-full" />
-      <SkeletonBlock className="mt-4 h-12 w-full" />
-    </aside>
-  );
-}
-
 export function PlansSectionFallback() {
   return (
     <Section
@@ -24,6 +11,7 @@ export function PlansSectionFallback() {
       eyebrow="US plans"
       title="eSIM USA plans"
       description="Choose a bundle by data amount and usage window. All plans include local US data-only connectivity."
+      className="pb-20"
     >
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
@@ -38,7 +26,6 @@ export function PlansSectionFallback() {
               <SkeletonBlock className="h-4 w-5/6" />
               <SkeletonBlock className="h-4 w-4/6" />
             </div>
-            <SkeletonBlock className="mt-6 h-10 w-full" />
           </div>
         ))}
       </div>
