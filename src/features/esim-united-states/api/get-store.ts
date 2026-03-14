@@ -3,49 +3,40 @@ import { CACHE_TAGS } from "../constant/cache-tags";
 import { assignPopularity } from "../util/assign-popularity";
 import { mapBundleToPlanItem } from "../util/map-bundle-to-plan";
 import { mockUnitedStatesStore } from "../model/provider-content";
+import { randomizeStoreResponse } from "./fake-live-updates";
 import { simulateApiLatency } from "./simulate-latency";
-
-let storeDebugVersion = 0;
-
-function getStoreDebugStamp() {
-  storeDebugVersion += 1;
-  return {
-    label: `snapshot-${storeDebugVersion}`,
-  };
-}
 
 export async function getUnitedStatesStoreSnapshot() {
   "use cache";
 
   cacheLife("providerCatalog");
-  cacheTag(
-    CACHE_TAGS.providerCatalog,
-    CACHE_TAGS.prices,
-    CACHE_TAGS.planDetails,
-  );
+  cacheTag(CACHE_TAGS.providerCatalog);
 
   await simulateApiLatency(150);
 
-  const debug = getStoreDebugStamp();
-
-  const mockData = mockUnitedStatesStore;
-
-  return {
-    ...mockData,
-    __debug: debug,
+  const mockData = {
+    ...mockUnitedStatesStore,
+    store: mockUnitedStatesStore.store.map((bundle) => ({
+      ...bundle,
+      operators: bundle.operators.map((operator) => ({ ...operator })),
+      staticPrices: bundle.staticPrices.map((price) => ({ ...price })),
+    })),
   };
+
+  return mockData;
 }
 
 export async function getUnitedStatesPlans() {
-  const { store, __debug } = await getUnitedStatesStoreSnapshot();
-  const plans = assignPopularity(store.map((bundle) => mapBundleToPlanItem(bundle)));
+  "use cache";
 
-  return plans.map((plan, index) =>
-    index === 0
-      ? {
-          ...plan,
-          bestFor: [...plan.bestFor, `Data cache version: ${__debug.label}`],
-        }
-      : plan,
-  );
+  cacheLife("providerCatalog");
+  cacheTag(CACHE_TAGS.prices);
+
+  await simulateApiLatency(150);
+
+  const { store } = await getUnitedStatesStoreSnapshot();
+  const randomizedStore = randomizeStoreResponse({ store });
+  const plans = assignPopularity(randomizedStore.store.map((bundle) => mapBundleToPlanItem(bundle)));
+
+  return plans;
 }

@@ -15,6 +15,6 @@ describe("PlanDetailsSectionSlot", () => {
 
     expect(screen.getByText("United States eSIM plan details")).toBeInTheDocument();
     expect(screen.getByText("Operators")).toBeInTheDocument();
-    expect(screen.getAllByText(/\(snapshot-\d+\)/).length).toBeGreaterThan(0);
+    expect(screen.getByText("Phone number / SMS")).toBeInTheDocument();
   });
 });

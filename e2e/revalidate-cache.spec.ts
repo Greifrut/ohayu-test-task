@@ -1,14 +1,31 @@
-import { expect, test, type APIRequestContext } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 
 const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "demo-secret";
 
-function parseCacheIndex(text: string | null, label: string): number {
-  if (!text) {
-    return -1;
-  }
+async function getVisibleSectionText(page: Page, sectionId: string): Promise<string> {
+  const section = page
+    .locator("main")
+    .locator(`#${sectionId}`)
+    .filter({ hasNot: page.locator(".animate-pulse") })
+    .first();
 
-  const match = text.match(new RegExp(`${label}-(\\d+)`));
-  return match ? Number.parseInt(match[1], 10) : -1;
+  await expect(section).toBeVisible();
+  return (await section.innerText()).trim();
+}
+
+async function getVisibleFaqAnswers(page: Page): Promise<string> {
+  const section = page
+    .locator("main")
+    .locator("#faq")
+    .filter({ hasNot: page.locator(".animate-pulse") })
+    .first();
+
+  await expect(section).toBeVisible();
+
+  const answerNodes = section.locator("details p");
+  const answerTexts = await answerNodes.allTextContents();
+
+  return answerTexts.join("\n").trim();
 }
 
 async function callRevalidate(request: APIRequestContext, tag: string) {
@@ -30,33 +47,41 @@ test("revalidate endpoint refreshes cached content and updates content after rel
 }) => {
   await page.goto("/");
 
-  const planCache = page.locator("#plans").getByText(/Data cache version: snapshot-\d+/).first();
-  await expect(planCache).toBeVisible();
-  const beforePlanCacheLabel = parseCacheIndex(await planCache.textContent(), "snapshot");
+  const planSectionBefore = await getVisibleSectionText(page, "plans");
+  const planDetailsSectionBefore = await getVisibleSectionText(page, "plan-details");
+  const faqSectionBefore = await getVisibleSectionText(page, "faq");
 
-  const faqCache = page.locator("#faq").getByText(/\(cache: faq-\d+\)/).first();
-  await expect(faqCache).toBeAttached();
-  const beforeFaqCacheLabel = parseCacheIndex(await faqCache.textContent(), "faq");
-
-  expect(beforePlanCacheLabel).toBeGreaterThan(0);
-  expect(beforeFaqCacheLabel).toBeGreaterThan(0);
+  expect(planSectionBefore).toBeTruthy();
+  expect(planDetailsSectionBefore).toBeTruthy();
+  expect(faqSectionBefore).toBeTruthy();
 
   await callRevalidate(request, "us-prices");
   await page.reload({ waitUntil: "networkidle" });
 
-  const planCacheAfterReload = page
-    .locator("#plans")
-    .getByText(/Data cache version: snapshot-\d+/)
-    .first();
-  await expect(planCacheAfterReload).toBeVisible();
-  const afterPlanCacheLabel = parseCacheIndex(await planCacheAfterReload.textContent(), "snapshot");
-  expect(afterPlanCacheLabel).toBeGreaterThan(beforePlanCacheLabel);
+  const planSectionAfterPriceRevalidate = await getVisibleSectionText(page, "plans");
+  const planDetailsSectionAfterPriceRevalidate = await getVisibleSectionText(page, "plan-details");
+  expect(planSectionAfterPriceRevalidate).not.toBe(planSectionBefore);
+  expect(planDetailsSectionAfterPriceRevalidate).toBe(planDetailsSectionBefore);
+
+  const faqAnswersBefore = await getVisibleFaqAnswers(page);
 
   await callRevalidate(request, "us-faqs");
   await page.reload({ waitUntil: "networkidle" });
 
-  const faqCacheAfterReload = page.locator("#faq").getByText(/\(cache: faq-\d+\)/).first();
-  await expect(faqCacheAfterReload).toBeAttached();
-  const afterFaqCacheLabel = parseCacheIndex(await faqCacheAfterReload.textContent(), "faq");
-  expect(afterFaqCacheLabel).toBeGreaterThan(beforeFaqCacheLabel);
+  const faqSectionAfterFaqRevalidate = await getVisibleSectionText(page, "faq");
+  const faqAnswersAfterFaqRevalidate = await getVisibleFaqAnswers(page);
+  expect(faqSectionAfterFaqRevalidate).toBeTruthy();
+  expect(faqAnswersAfterFaqRevalidate).not.toBe(faqAnswersBefore);
+  expect(planDetailsSectionAfterPriceRevalidate).toBe(planDetailsSectionBefore);
+
+  await callRevalidate(request, "us-plan-details");
+  await page.reload({ waitUntil: "networkidle" });
+
+  const planDetailsSectionAfterPlanRevalidate = await getVisibleSectionText(page, "plan-details");
+  expect(planDetailsSectionAfterPlanRevalidate).not.toBe(planDetailsSectionBefore);
+  expect(planDetailsSectionAfterPlanRevalidate).not.toBe(planDetailsSectionAfterPriceRevalidate);
+  expect(await getVisibleFaqAnswers(page)).toBe(faqAnswersAfterFaqRevalidate);
+
+  const planSectionAfterAll = await getVisibleSectionText(page, "plans");
+  expect(planSectionAfterAll).toBe(planSectionAfterPriceRevalidate);
 });

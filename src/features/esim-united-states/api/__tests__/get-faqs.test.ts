@@ -6,14 +6,16 @@ vi.mock("next/cache", () => ({
 }));
 
 import { getUnitedStatesFaqs } from "../get-faqs";
+import { seoFaqs } from "../../model/seo-content";
 
 describe("getUnitedStatesFaqs", () => {
-  it("returns a different cache label each call", async () => {
+  it("adds refreshed content to FAQ answers", async () => {
     const first = await getUnitedStatesFaqs();
     const second = await getUnitedStatesFaqs();
 
-    expect(first[0].answer).toContain("cache: faq-1");
-    expect(second[0].answer).toContain("cache: faq-2");
+    expect(first[0].answer).not.toBe(seoFaqs[0].answer);
+    expect(second[0].answer).not.toBe(seoFaqs[0].answer);
     expect(first[0].answer).not.toBe(second[0].answer);
+    expect(first[1].answer).not.toBe(second[1].answer);
   });
 });

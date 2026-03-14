@@ -202,10 +202,13 @@ Jobs:
 
 ## Notes
 
-- The project uses mocked responses in API modules for deterministic demo behavior.
-- Debug labels are injected into rendered content to make cache revalidation behavior observable in tests:
-  - Plans include `Data cache version: snapshot-N`
-  - FAQs include `(cache: faq-N)`
+- The project uses mocked responses in API modules with realistic value variation generated in
+  `simulate-latency` + `fake-live-updates`.
+- Revalidation behavior is still testable by comparing rendered section payloads before and after
+  cache tag refresh:
+  - `us-prices` updates the plans section.
+  - `us-plan-details` updates the plan details section.
+  - `us-faqs` updates the FAQ section.
 
 ## License
 
