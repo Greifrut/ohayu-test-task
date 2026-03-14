@@ -17,7 +17,12 @@ const initialState = (): VersionState => ({
   faqs: 0,
 });
 
-const stateDirectory = path.join(os.tmpdir(), "ohayu-test-app");
+const stateScope =
+  process.env.VITEST_POOL_ID ??
+  process.env.VITEST_WORKER_ID ??
+  String(process.pid);
+
+const stateDirectory = path.join(os.tmpdir(), "ohayu-test-app", stateScope);
 const stateFile = path.join(stateDirectory, "content-version-state.json");
 
 async function writeState(state: VersionState): Promise<void> {
