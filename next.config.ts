@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   cacheLife: {
     providerCatalog: {
       stale: 300,
-      revalidate: 172800,
-      expire: 604800,
+      revalidate: 21600,
+      expire: 259200,
     },
     seoManaged: {
       stale: 300,
