@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { Section } from "@/shared/ui/section";
-import { PlanCard } from "./plan-card";
+import { useMemo, useState } from "react";
 import type { PlanItem } from "../model/types";
 import { usePlanCurrencyStore } from "../store/use-plan-currency-store";
+import { PlanCard } from "./plan-card";
 
 interface PlansSectionProps {
   plans: PlanItem[];
@@ -18,9 +18,13 @@ export function PlansSection({ plans: planItems }: PlansSectionProps) {
   const selectedCurrency = usePlanCurrencyStore(
     (state) => state.selectedCurrency,
   );
-  const [selectedPlanId, setSelectedPlanId] = useState<string>(initialPlan?.id ?? "");
-  const selectedPlan = planItems.find((plan) => plan.id === selectedPlanId) ?? initialPlan;
-  const selectedPlanPrice = selectedPlan?.prices[selectedCurrency] ?? selectedPlan?.prices.USD;
+  const [selectedPlanId, setSelectedPlanId] = useState<string>(
+    initialPlan?.id ?? "",
+  );
+  const selectedPlan =
+    planItems.find((plan) => plan.id === selectedPlanId) ?? initialPlan;
+  const selectedPlanPrice =
+    selectedPlan?.prices[selectedCurrency] ?? selectedPlan?.prices.USD;
 
   return (
     <>
@@ -63,7 +67,7 @@ export function PlansSection({ plans: planItems }: PlansSectionProps) {
           <button
             type="button"
             disabled={!selectedPlan}
-            className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             Continue
           </button>
