@@ -25,7 +25,7 @@ export function CurrencySelector() {
         return (
           <button
             aria-pressed={isSelected}
-            className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+            className={`rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
               isSelected
                 ? "bg-sky-700 text-white shadow-[0_8px_18px_rgba(3,105,161,0.22)]"
                 : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
