@@ -1,3 +1,4 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -5,7 +6,7 @@ const nextConfig: NextConfig = {
   cacheLife: {
     providerCatalog: {
       stale: 300,
-      revalidate: 43200,
+      revalidate: 172800,
       expire: 604800,
     },
     seoManaged: {
@@ -28,4 +29,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+  analyzerMode: "static",
+  openAnalyzer: false,
+})(nextConfig);
