@@ -1,16 +1,14 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "../constant/cache-tags";
-import { fetchMockJson } from "./fetch-mock";
-import type { FaqItem } from "../model/types";
+import { seoFaqs } from "../model/seo-content";
+import { simulateApiLatency } from "./simulate-latency";
 
 let faqDebugVersion = 0;
 
 function getFaqDebugStamp() {
   faqDebugVersion += 1;
   return {
-    version: faqDebugVersion,
     label: `faq-${faqDebugVersion}`,
-    generatedAt: new Date().toISOString(),
   };
 }
 
@@ -20,11 +18,11 @@ export async function getUnitedStatesFaqs() {
   cacheLife("seoManaged");
   cacheTag(CACHE_TAGS.faqs);
 
+  await simulateApiLatency(150);
+
   const debug = getFaqDebugStamp();
 
-  const faqData = await fetchMockJson<{ faqs: FaqItem[] }>({
-    path: "/api/mock/esim/united-states-us/faqs",
-  });
+  const faqData = { faqs: seoFaqs };
 
   return faqData.faqs.map((faq) => ({
     ...faq,
