@@ -29,7 +29,7 @@ async function getVisibleFaqAnswers(page: Page): Promise<string> {
 }
 
 async function callRevalidate(request: APIRequestContext, tag: string) {
-  const response = await request.post("/api/revalidate", {
+  const response = await request.post("/api/esim-us/revalidate", {
     data: {
       secret: revalidateSecret,
       tag,

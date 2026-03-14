@@ -1,5 +1,6 @@
 import { Badge } from "@/shared/ui/badge";
 import { Container } from "@/shared/ui/container";
+import { SiteHeader } from "@/shared/ui/site-header";
 import Link from "next/link";
 
 const reviewSignals = [
@@ -31,25 +32,17 @@ const reviewerChecklist = [
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.22),_transparent_36%),linear-gradient(180deg,_#f8fbff_0%,_#eef5ff_44%,_#ffffff_100%)] text-slate-950">
-      <header className="border-b border-sky-100/80 bg-white/80 backdrop-blur">
-        <Container className="flex items-center justify-between py-5">
-          <Link href="/" className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-700 text-sm font-black text-white shadow-[0_12px_30px_rgba(3,105,161,0.22)]">
-              O
-            </span>
-            <span className="text-base font-semibold tracking-tight text-slate-900">
-              Ohayu Next.js Demo
-            </span>
-          </Link>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.22),transparent_36%),linear-gradient(180deg,#f8fbff_0%,#eef5ff_44%,#ffffff_100%)] text-slate-950">
+      <SiteHeader
+        actions={
           <Link
             href="/esim/united-states-us"
             className="rounded-full border border-sky-200 bg-white px-4 py-2 text-sm font-semibold text-sky-800 transition hover:border-sky-300 hover:bg-sky-50"
           >
             Open United States demo page
           </Link>
-        </Container>
-      </header>
+        }
+      />
 
       <main>
         <Container className="grid gap-10 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:py-24">
@@ -97,7 +90,7 @@ export function HomePage() {
             </ul>
           </section>
 
-          <section className="rounded-[2rem] border border-sky-100 bg-slate-950 p-6 text-white shadow-[0_28px_80px_rgba(15,23,42,0.24)]">
+          <section className="rounded-4xl border border-sky-100 bg-slate-950 p-6 text-white shadow-[0_28px_80px_rgba(15,23,42,0.24)]">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-300">
               Reviewer checklist
             </p>

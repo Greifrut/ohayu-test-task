@@ -13,6 +13,20 @@ function buildPlan(id: string, overrides: Partial<PlanItem> = {}): PlanItem {
     priceLabel: "$15.49",
     unitPrice: "$3.10 per GB",
     sortPrice: 3.1,
+    prices: {
+      USD: {
+        amountCents: 1549,
+        priceLabel: "$15.49",
+        unitPrice: "$3.10 per GB",
+        sortPrice: 3.1,
+      },
+      EUR: {
+        amountCents: 1449,
+        priceLabel: "EUR 14.49",
+        unitPrice: "EUR 2.90 per GB",
+        sortPrice: 2.9,
+      },
+    },
     operatorNames: ["AT&T", "Verizon", "T-Mobile USA"],
     bestFor: ["Data only", "Top-up available"],
     ...overrides,
@@ -23,7 +37,14 @@ describe("PlanCard", () => {
   it("shows popular badge and applies selected state", () => {
     const selectedPlan = buildPlan("plan-a", { highlighted: true, badge: "Most popular" });
 
-    render(<PlanCard isSelected={true} onSelect={vi.fn()} plan={selectedPlan} />);
+    render(
+      <PlanCard
+        isSelected={true}
+        onSelect={vi.fn()}
+        plan={selectedPlan}
+        selectedCurrency="USD"
+      />,
+    );
 
     expect(screen.getByText("Most popular")).toBeInTheDocument();
     expect(screen.getByRole("button")).toHaveClass("border-sky-600");
@@ -31,7 +52,14 @@ describe("PlanCard", () => {
 
   it("invokes selection handler on click and keyboard activation", async () => {
     const onSelect = vi.fn();
-    render(<PlanCard isSelected={false} onSelect={onSelect} plan={buildPlan("plan-b")} />);
+    render(
+      <PlanCard
+        isSelected={false}
+        onSelect={onSelect}
+        plan={buildPlan("plan-b")}
+        selectedCurrency="USD"
+      />,
+    );
 
     const card = screen.getByRole("button");
     fireEvent.click(card);
@@ -41,4 +69,3 @@ describe("PlanCard", () => {
     expect(onSelect).toHaveBeenCalledTimes(3);
   });
 });
-

@@ -1,5 +1,5 @@
+import { siteUrl } from "@/shared/lib/site-origin";
 import type { MetadataRoute } from "next";
-import { siteOrigin } from "@/shared/lib/site-origin";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${siteOrigin}/sitemap.xml`,
+    sitemap: `${siteUrl.toString()}/sitemap.xml`,
   };
 }

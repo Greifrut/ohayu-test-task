@@ -1,4 +1,10 @@
-const defaultSiteOrigin = "http://localhost:3000";
+const siteOrigin =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.NEXT_PUBLIC_SITE_URL;
 
-export const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? defaultSiteOrigin;
-export const siteUrl = new URL(siteOrigin);
+if (!siteOrigin) {
+  throw new Error("NEXT_PUBLIC_SITE_URL or VERCEL_URL is not defined");
+}
+
+export const siteUrl = new URL(
+  siteOrigin.includes("http") ? siteOrigin : `https://${siteOrigin}`,
+);

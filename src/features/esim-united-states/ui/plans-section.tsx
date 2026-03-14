@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Section } from "@/shared/ui/section";
 import { PlanCard } from "./plan-card";
 import type { PlanItem } from "../model/types";
+import { usePlanCurrencyStore } from "../store/use-plan-currency-store";
 
 interface PlansSectionProps {
   plans: PlanItem[];
@@ -14,8 +15,12 @@ export function PlansSection({ plans: planItems }: PlansSectionProps) {
     () => planItems.find((plan) => plan.highlighted) ?? planItems[0],
     [planItems],
   );
+  const selectedCurrency = usePlanCurrencyStore(
+    (state) => state.selectedCurrency,
+  );
   const [selectedPlanId, setSelectedPlanId] = useState<string>(initialPlan?.id ?? "");
   const selectedPlan = planItems.find((plan) => plan.id === selectedPlanId) ?? initialPlan;
+  const selectedPlanPrice = selectedPlan?.prices[selectedCurrency] ?? selectedPlan?.prices.USD;
 
   return (
     <>
@@ -33,6 +38,7 @@ export function PlansSection({ plans: planItems }: PlansSectionProps) {
               key={plan.id}
               onSelect={() => setSelectedPlanId(plan.id)}
               plan={plan}
+              selectedCurrency={selectedCurrency}
             />
           ))}
         </div>
@@ -47,7 +53,9 @@ export function PlansSection({ plans: planItems }: PlansSectionProps) {
               <p className="mt-1 truncate text-sm font-semibold sm:text-base">
                 {selectedPlan.dataAmount} / {selectedPlan.validity}
               </p>
-              <p className="mt-1 text-xs text-slate-300">{selectedPlan.priceLabel}</p>
+              <p className="mt-1 text-xs text-slate-300">
+                {selectedPlanPrice?.priceLabel}
+              </p>
             </div>
           ) : (
             <p className="text-sm text-slate-200">Select a plan to continue</p>

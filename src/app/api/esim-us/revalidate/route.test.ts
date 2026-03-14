@@ -15,7 +15,7 @@ vi.mock("next/cache", () => ({
 
 import { POST } from "./route";
 
-describe("POST /api/revalidate", () => {
+describe("POST /api/esim-us/revalidate", () => {
   beforeEach(async () => {
     await resetContentVersions();
     revalidatePath.mockReset();
@@ -26,7 +26,7 @@ describe("POST /api/revalidate", () => {
     delete process.env.OHAYU_REVALIDATE_SECRET;
 
     const response = await POST(
-      new Request("http://localhost/api/revalidate", {
+      new Request("http://localhost/api/esim-us/revalidate", {
         method: "POST",
         body: JSON.stringify({
           secret: "anything",
@@ -46,7 +46,7 @@ describe("POST /api/revalidate", () => {
     process.env.OHAYU_REVALIDATE_SECRET = "test-secret";
 
     const response = await POST(
-      new Request("http://localhost/api/revalidate", {
+      new Request("http://localhost/api/esim-us/revalidate", {
         method: "POST",
         body: JSON.stringify({
           secret: "test-secret",

@@ -94,7 +94,7 @@ src/
   app/
     page.tsx
     esim/united-states-us/page.tsx
-    api/revalidate/route.ts
+    api/esim-us/revalidate/route.ts
     robots.ts
     sitemap.ts
   features/home/
@@ -154,8 +154,8 @@ Current strategy:
 
 A dedicated endpoint is provided for cache refresh:
 
-- Route: `/api/revalidate`
-- File: [`src/app/api/revalidate/route.ts`](/Users/arturbunko/Documents/ohayu/ohayu-test-app/src/app/api/revalidate/route.ts)
+- Route: `/api/esim-us/revalidate`
+- File: [`src/app/api/esim-us/revalidate/route.ts`](/Users/arturbunko/Documents/ohayu/ohayu-test-app/src/app/api/esim-us/revalidate/route.ts)
 - Method: `POST`
 - Body:
 

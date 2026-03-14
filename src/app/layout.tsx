@@ -1,6 +1,8 @@
+import { siteUrl } from "@/shared/lib/site-origin";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import "./globals.css";
-import { siteUrl } from "@/shared/lib/site-origin";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -35,6 +37,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <Analytics />
+        <SpeedInsights />
         {children}
       </body>
     </html>

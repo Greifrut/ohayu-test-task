@@ -26,11 +26,36 @@ test.describe("Ohayu pages", () => {
     await expect(page.getByRole("heading", { name: "eSIM USA plans" })).toBeVisible();
     await expect(page.getByRole("button").filter({ hasText: "3GB" }).first()).toBeVisible();
     await expect(page.getByRole("button").filter({ hasText: "Most popular" }).first()).toBeVisible();
+    await expect(page.getByText("Sign in")).toHaveCount(0);
     await expect(
       page
         .locator("#faq")
         .getByRole("heading", { name: "Frequently asked questions" }),
     ).toBeVisible();
+  });
+
+  test("switches displayed plan pricing between USD and EUR", async ({ page }) => {
+    await page.goto("/esim/united-states-us");
+
+    const featuredCard = page
+      .locator("section#plans")
+      .locator('[role="button"]', { hasText: "Most popular" })
+      .first();
+    const usdPrice = await featuredCard
+      .locator("p")
+      .filter({ hasText: /^\$/ })
+      .first()
+      .innerText();
+
+    await page.getByRole("button", { name: "EUR" }).click();
+
+    const eurPrice = await featuredCard
+      .locator("p")
+      .filter({ hasText: /€/ })
+      .first()
+      .innerText();
+
+    expect(eurPrice).not.toBe(usdPrice);
   });
 
   test("updates chosen-plan footer when selecting another plan", async ({ page }) => {
