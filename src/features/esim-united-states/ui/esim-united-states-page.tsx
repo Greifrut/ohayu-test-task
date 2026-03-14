@@ -9,7 +9,10 @@ import { SiteFooter } from "./site-footer";
 import { FaqSection } from "./faq-section";
 import { getUnitedStatesFaqs } from "../api/get-faqs";
 
-import { PlanDetailsSectionFallback, PlansSectionFallback } from "./section-fallbacks";
+import {
+  PlanDetailsSectionFallback,
+  PlansSectionFallback,
+} from "./fallbacks";
 import { PlanDetailsSectionSlot } from "./slots/plan-details-section-slot";
 import { PlansSectionSlot } from "./slots/plans-section-slot";
 
