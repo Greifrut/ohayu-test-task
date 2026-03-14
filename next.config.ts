@@ -18,15 +18,6 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  transpilePackages: ["next"],
-  turbopack: {
-    resolveAlias: {
-      "../build/polyfills/polyfill-module":
-        "./src/shared/lib/others/modern-polyfill.js",
-      "next/dist/build/polyfills/polyfill-module":
-        "./src/shared/lib/others/modern-polyfill.js",
-    },
-  },
 };
 
 export default withBundleAnalyzer({

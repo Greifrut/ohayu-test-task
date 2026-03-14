@@ -39,8 +39,8 @@ jobs:
       - name: Run ESLint
         run: pnpm lint
 
-  unit-and-integration:
-    name: Unit & Integration Tests
+  typecheck:
+    name: Typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: lint
@@ -64,14 +64,16 @@ jobs:
         env:
           CI: true
 
-      - name: Run unit and integration tests
-        run: pnpm test
+      - name: Run TypeScript checks
+        run: pnpm typecheck
 
-  e2e:
-    name: E2E
+  build:
+    name: Production Build
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: unit-and-integration
+    timeout-minutes: 20
+    needs:
+      - lint
+      - typecheck
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -92,8 +94,71 @@ jobs:
         env:
           CI: true
 
+      - name: Run production build
+        run: pnpm build
+
+  unit-and-integration:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs:
+      - lint
+      - typecheck
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          CI: true
+
+      - name: Run unit and integration tests
+        run: pnpm test:ci
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs:
+      - build
+      - unit-and-integration
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          CI: true
+
+      - name: Build app for production E2E
+        run: pnpm build
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run Playwright E2E tests
-        run: PW_START_WEBSERVER=1 pnpm test:e2e
+      - name: Run Playwright E2E tests against production server
+        run: PW_START_WEBSERVER=1 PW_USE_PROD_SERVER=1 pnpm test:e2e

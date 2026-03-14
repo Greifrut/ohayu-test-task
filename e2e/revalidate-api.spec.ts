@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "demo-secret";
+const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "playwright-secret";
 
 test.describe("revalidate API", () => {
   test("returns success for allowed tags with valid secret", async ({ request }) => {

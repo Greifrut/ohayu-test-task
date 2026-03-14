@@ -1,8 +1,21 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("US eSIM page", () => {
-  test("renders hero, plans and details with cache-driven content", async ({ page }) => {
+test.describe("Ohayu pages", () => {
+  test("renders a dedicated home page and links to the country demo", async ({ page }) => {
     await page.goto("/");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "SSR-ready storefront demo for the Ohayu migration",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: "Open United States demo page" }),
+    ).toHaveAttribute("href", "/esim/united-states-us");
+  });
+
+  test("renders hero, plans and details with cache-driven content", async ({ page }) => {
+    await page.goto("/esim/united-states-us");
 
     await expect(page.getByText("United States eSIM plans")).toBeVisible();
     await expect(
@@ -21,7 +34,7 @@ test.describe("US eSIM page", () => {
   });
 
   test("updates chosen-plan footer when selecting another plan", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/esim/united-states-us");
 
     const mostPopular = page
       .locator("section#plans")
@@ -42,7 +55,7 @@ test.describe("US eSIM page", () => {
   });
 
   test("opens and collapses FAQ items", async ({ page }) => {
-    await page.goto("/#faq");
+    await page.goto("/esim/united-states-us#faq");
 
     const faqSection = page.locator("#faq");
     const firstQuestion = faqSection.getByText("Can I use this eSIM on iPhone and Android?");

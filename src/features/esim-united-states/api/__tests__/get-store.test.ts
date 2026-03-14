@@ -5,11 +5,16 @@ vi.mock("next/cache", () => ({
   cacheTag: vi.fn(),
 }));
 
+import { CACHE_TAGS } from "../../constant/cache-tags";
+import { bumpVersionForTag, resetContentVersions } from "../content-version-store";
 import { getUnitedStatesPlans } from "../get-store";
 
 describe("getUnitedStatesPlans", () => {
-  it("returns refreshed pricing on each mocked fetch when cache is not reused", async () => {
+  it("updates plan pricing after a prices revalidation event", async () => {
+    await resetContentVersions();
+
     const firstCall = await getUnitedStatesPlans();
+    await bumpVersionForTag(CACHE_TAGS.prices);
     const secondCall = await getUnitedStatesPlans();
 
     const firstPrices = firstCall.map((plan) => plan.priceLabel);
@@ -19,6 +24,8 @@ describe("getUnitedStatesPlans", () => {
   });
 
   it("marks the featured plan with popularity metadata", async () => {
+    await resetContentVersions();
+
     const plans = await getUnitedStatesPlans();
     const featured = plans.find((plan) => plan.badge === "Most popular");
     const otherPlans = plans.filter((plan) => plan.badge !== "Most popular");

@@ -1,6 +1,6 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 
-const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "demo-secret";
+const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "playwright-secret";
 
 async function getVisibleSectionText(page: Page, sectionId: string): Promise<string> {
   const section = page
@@ -45,7 +45,7 @@ test("revalidate endpoint refreshes cached content and updates content after rel
   page,
   request,
 }) => {
-  await page.goto("/");
+  await page.goto("/esim/united-states-us");
 
   const planSectionBefore = await getVisibleSectionText(page, "plans");
   const planDetailsSectionBefore = await getVisibleSectionText(page, "plan-details");
