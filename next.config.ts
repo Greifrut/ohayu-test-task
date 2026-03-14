@@ -22,6 +22,6 @@ const nextConfig: NextConfig = {
 
 export default withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
-  analyzerMode: "static",
+  analyzerMode: "json",
   openAnalyzer: false,
 })(nextConfig);
