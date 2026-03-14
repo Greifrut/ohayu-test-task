@@ -1,36 +1,29 @@
 import { Suspense } from "react";
-import { EsimPageHeader } from "./page-header";
-import { HeroSection } from "./hero-section";
 import { DetailsSection } from "./details-section";
+import { HeroSection } from "./hero-section";
 import { HowItWorksSection } from "./how-it-works-section";
+import { EsimPageHeader } from "./page-header";
 import { RelatedCountriesSection } from "./related-countries-section";
 import { ReviewsSection } from "./reviews-section";
 import { SiteFooter } from "./site-footer";
+import { FaqSection } from "./faq-section";
+import { getUnitedStatesFaqs } from "../api/get-faqs";
+
 import {
-  CheckoutPanelSlot,
-  FaqSectionSlot,
-  PlanDetailsSectionSlot,
-  PlansSectionSlot,
-} from "./async-sections";
-import {
-  CheckoutPanelFallback,
-  FaqSectionFallback,
   PlanDetailsSectionFallback,
   PlansSectionFallback,
-} from "./section-fallbacks";
+} from "./fallbacks";
+import { PlanDetailsSectionSlot } from "./slots/plan-details-section-slot";
+import { PlansSectionSlot } from "./slots/plans-section-slot";
 
-export function EsimUnitedStatesPage() {
+export async function EsimUnitedStatesPage() {
+  const faqs = await getUnitedStatesFaqs();
+
   return (
     <div className="bg-sky-50/60">
       <EsimPageHeader />
       <main>
-        <HeroSection
-          checkoutPanel={(
-            <Suspense fallback={<CheckoutPanelFallback />}>
-              <CheckoutPanelSlot />
-            </Suspense>
-          )}
-        />
+        <HeroSection />
         <Suspense fallback={<PlansSectionFallback />}>
           <PlansSectionSlot />
         </Suspense>
@@ -40,9 +33,7 @@ export function EsimUnitedStatesPage() {
         <DetailsSection />
         <HowItWorksSection />
         <ReviewsSection />
-        <Suspense fallback={<FaqSectionFallback />}>
-          <FaqSectionSlot />
-        </Suspense>
+        <FaqSection faqs={faqs} />
         <RelatedCountriesSection />
       </main>
       <SiteFooter />

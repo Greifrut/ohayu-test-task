@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "analyze": "ANALYZE=true pnpm build --webpack",
+    "test:e2e": "PW_START_WEBSERVER=1 playwright test",
+    "test:e2e:report": "PW_SKIP_WEBSERVER=1 playwright show-report playwright-report",
+    "test:e2e:install": "playwright install",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ci": "vitest run"
   },
   "dependencies": {
     "next": "16.1.6",
@@ -14,13 +21,20 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@next/bundle-analyzer": "^16.1.6",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

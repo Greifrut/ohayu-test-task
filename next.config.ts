@@ -1,3 +1,4 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -5,7 +6,7 @@ const nextConfig: NextConfig = {
   cacheLife: {
     providerCatalog: {
       stale: 300,
-      revalidate: 43200,
+      revalidate: 172800,
       expire: 604800,
     },
     seoManaged: {
@@ -14,6 +15,22 @@ const nextConfig: NextConfig = {
       expire: 31536000,
     },
   },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  transpilePackages: ["next"],
+  turbopack: {
+    resolveAlias: {
+      "../build/polyfills/polyfill-module":
+        "./src/shared/lib/others/modern-polyfill.js",
+      "next/dist/build/polyfills/polyfill-module":
+        "./src/shared/lib/others/modern-polyfill.js",
+    },
+  },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+  analyzerMode: "static",
+  openAnalyzer: false,
+})(nextConfig);
