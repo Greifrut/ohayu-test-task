@@ -1,6 +1,32 @@
-import { expect, test, type APIRequestContext } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 
 const revalidateSecret = process.env.OHAYU_REVALIDATE_SECRET ?? "demo-secret";
+
+async function getVisibleSectionText(page: Page, sectionId: string): Promise<string> {
+  const section = page
+    .locator("main")
+    .locator(`#${sectionId}`)
+    .filter({ hasNot: page.locator(".animate-pulse") })
+    .first();
+
+  await expect(section).toBeVisible();
+  return (await section.innerText()).trim();
+}
+
+async function getVisibleFaqAnswers(page: Page): Promise<string> {
+  const section = page
+    .locator("main")
+    .locator("#faq")
+    .filter({ hasNot: page.locator(".animate-pulse") })
+    .first();
+
+  await expect(section).toBeVisible();
+
+  const answerNodes = section.locator("details p");
+  const answerTexts = await answerNodes.allTextContents();
+
+  return answerTexts.join("\n").trim();
+}
 
 async function callRevalidate(request: APIRequestContext, tag: string) {
   const response = await request.post("/api/revalidate", {
@@ -21,9 +47,9 @@ test("revalidate endpoint refreshes cached content and updates content after rel
 }) => {
   await page.goto("/");
 
-  const planSectionBefore = (await page.locator("#plans").innerText()).trim();
-  const planDetailsSectionBefore = (await page.locator("#plan-details").innerText()).trim();
-  const faqSectionBefore = (await page.locator("#faq").innerText()).trim();
+  const planSectionBefore = await getVisibleSectionText(page, "plans");
+  const planDetailsSectionBefore = await getVisibleSectionText(page, "plan-details");
+  const faqSectionBefore = await getVisibleSectionText(page, "faq");
 
   expect(planSectionBefore).toBeTruthy();
   expect(planDetailsSectionBefore).toBeTruthy();
@@ -32,26 +58,30 @@ test("revalidate endpoint refreshes cached content and updates content after rel
   await callRevalidate(request, "us-prices");
   await page.reload({ waitUntil: "networkidle" });
 
-  const planSectionAfterPriceRevalidate = (await page.locator("#plans").innerText()).trim();
-  const planDetailsSectionAfterPriceRevalidate = (await page.locator("#plan-details").innerText()).trim();
+  const planSectionAfterPriceRevalidate = await getVisibleSectionText(page, "plans");
+  const planDetailsSectionAfterPriceRevalidate = await getVisibleSectionText(page, "plan-details");
   expect(planSectionAfterPriceRevalidate).not.toBe(planSectionBefore);
   expect(planDetailsSectionAfterPriceRevalidate).toBe(planDetailsSectionBefore);
+
+  const faqAnswersBefore = await getVisibleFaqAnswers(page);
 
   await callRevalidate(request, "us-faqs");
   await page.reload({ waitUntil: "networkidle" });
 
-  const faqSectionAfterFaqRevalidate = (await page.locator("#faq").innerText()).trim();
-  expect(faqSectionAfterFaqRevalidate).not.toBe(faqSectionBefore);
+  const faqSectionAfterFaqRevalidate = await getVisibleSectionText(page, "faq");
+  const faqAnswersAfterFaqRevalidate = await getVisibleFaqAnswers(page);
+  expect(faqSectionAfterFaqRevalidate).toBeTruthy();
+  expect(faqAnswersAfterFaqRevalidate).not.toBe(faqAnswersBefore);
   expect(planDetailsSectionAfterPriceRevalidate).toBe(planDetailsSectionBefore);
 
   await callRevalidate(request, "us-plan-details");
   await page.reload({ waitUntil: "networkidle" });
 
-  const planDetailsSectionAfterPlanRevalidate = (await page.locator("#plan-details").innerText()).trim();
+  const planDetailsSectionAfterPlanRevalidate = await getVisibleSectionText(page, "plan-details");
   expect(planDetailsSectionAfterPlanRevalidate).not.toBe(planDetailsSectionBefore);
   expect(planDetailsSectionAfterPlanRevalidate).not.toBe(planDetailsSectionAfterPriceRevalidate);
-  expect(faqSectionAfterFaqRevalidate).not.toBe(faqSectionBefore);
+  expect(await getVisibleFaqAnswers(page)).toBe(faqAnswersAfterFaqRevalidate);
 
-  const planSectionAfterAll = (await page.locator("#plans").innerText()).trim();
+  const planSectionAfterAll = await getVisibleSectionText(page, "plans");
   expect(planSectionAfterAll).toBe(planSectionAfterPriceRevalidate);
 });
