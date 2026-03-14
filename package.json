@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:ci": "vitest run"
@@ -17,18 +19,19 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "@testing-library/jest-dom": "^6.5.0",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^26.1.0",
     "vitest": "^3.2.4"
   }
 }
